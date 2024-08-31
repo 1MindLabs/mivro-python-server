@@ -1,92 +1,86 @@
-<p align="center">
-  <img src="browser-extension/assets/oth-icons/logo-transparent.png" alt="Project Logo">
-</p>
+# Mivro Python Server
 
-## Project Description
+This is the backend server for the Mivro project, built with Flask framework. It serves as the core of the Mivro ecosystem, handling several critical functions, including user authentication, data processing, and API integrations.
 
-The app supports barcode scanning for foods, drinks, cosmetics, medicines, and pet foods. It provides detailed ingredient information, categorizes nutrients into positive and negative (either generally or based on user-specific health data), identifies associated health risks, and suggests alternatives using an AI recommendation engine.
+**Maintained By**: [Areeb Ahmed](https://github.com/areebahmeddd)
 
-### Key Features
+## Repository Structure
 
-- **Search Engine**: Easily find products without barcode scanning, with upcoming support for image and live product recognition.
-- **Meal Tracker**: Monitor your daily nutritional intake by scanning product barcodes, allowing you to easily track and manage your meals.
-- **Marketplace**: Discover and purchase for healthier alternatives from our trusted partners.
-- **Browser Extension**: Integrate app features seamlessly into your online shopping experience.
+### Instructions (`instructions/`)
 
-Additionally, the app includes a Recipe Chatbot for personalized recipe recommendations and an Account Activity feature to track your scan history, searches, and payments.
+Contains templates used by the Gemini AI model for various functionalities:
 
-## System Architecture
+- **`lumi_instructions.md`**: Template for analyzing nutrients and categorizing them into positive and negative.
+- **`savora_instructions.md`**: Template for the recipe chatbot, guiding the AI in generating personalized recipe recommendations.
+- **`swapr_instructions.md`**: Template for providing healthier product alternatives based on user preferences.
 
-<p align="center">
-  <img src="browser-extension/assets/oth-icons/architecture.png" alt="System Architecture">
-</p>
+### Metadata (`metadata/`)
 
----
+Contains essential JSON files used for data processing and mapping:
 
-1. **Barcode Scan**: Utilizes the `zxing_flutter` library to capture barcode input from the user via the Flutter app. The scanned barcode is then sent to the Django server for further processing.
+- **`additives_names.json`**: Maps additive codes (e.g., "E100") to their corresponding names (e.g., "Curcumin"). This is used during data processing to convert numeric codes into readable names.
+- **`food_categories.json`**: Maps food categories (e.g., "Milk") to broader categories (e.g., "Milk Products", "Milk Solids") to associate appropriate icons with nutrients.
+- **`nutrient_limits.json`**: Defines the lower and upper limits for various nutrients (e.g., "calcium": { "unit": "mg", "lower_limit": 1000, "upper_limit": 1300 }). Although deprecated, it was originally used for sorting nutrients into positive and negative categories based on their range.
+- **`product_schema.json`**: Specifies the required fields from the OpenFoodFacts API, defining the structure for product data.
 
-2. **Text Search**: Accepts text input from the user through the Flutter app for product lookup. This input is forwarded to the Django server to query the Firestore database for relevant product information.
+### Python Server (`server/`)
 
-3. **Django Server**: Serves as the central backend server responsible for user authentication, data cleaning, integration with the Gemini API, and interaction with Google Firebase services.
+Contains the main application code, including routes, configurations, and utility functions:
 
-4. **OpenFoodFacts API**: Fetches raw, detailed information about products based on barcode or text search inputs. This API provides comprehensive ingredient and nutritional data, including metadata such as name, brand, and more.
-
-5. **Gemini API**: Analyzes data from the OpenFoodFacts API, sorting nutrients into positive and negative categories, flagging potential health risks, and offering product recommendations.
-
-6. **Firestore Database**: Stores processed product information, facilitating quick lookups for both the browser extension and the Flutter app. If no barcode is detected, it searches the database for relevant details.
-
-7. **Flutter App**: Cross-platform mobile application enabling users to scan barcodes for offline shopping, access features such as a recipe chatbot, meal tracker for monitoring nutritional intake, and a marketplace for healthy products.
-
-8. **Browser Extension**: Extends the features of the Flutter app to the user's online shopping experience, allowing product lookups using our search engine directly within the browser.
+- **`app.py`**: Defines the main application blueprint and routes.
+- **`auth.py`**: Manages Firebase-based user authentication, including registration and login.
+- **`chat.py`**: Handles routes for user chat functionalities, such as loading and updating messages.
+- **`config.py`**: Contains environment variables and server configuration settings.
+- **`database.py`**: Provides methods for interacting with the Firebase database, including data storage and retrieval.
+- **`gemini.py`**: Interfaces with the Gemini AI model for nutrient analysis and product recommendations.
+- **`mapping.py`**: Manages mappings for additives, NOVA groups, NutriScore grades, and food icons.
+- **`middleware.py`**: Implements global request authentication and error handling.
+- **`models.py`**: Defines the database schema and model structures.
+- **`search.py`**: Connects to the OpenFoodFacts API to process and map product data.
+- **`user.py`**: Manages user profile routes, including profile updates and history management.
+- **`utils.py`**: Contains utility functions for data processing and structuring API responses.
 
 ## Getting Started
 
-Follow these steps to set up and run the Mivro software on your local machine, or you can watch the [demo video](https://youtube.com/watch?v=ToXUq-NSkUg).
+Follow these steps to set up and run the Mivro Python Server on your local machine, or you can watch the [demo video](https://youtube.com/watch?v=ToXUq-NSkUg).
 
 ### Prerequisites
 
-- [Python >= 3.11.9](https://python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe)
-- [Node.js >= 20.14.0](https://nodejs.org/dist/v20.14.0/node-v20.14.0-x64.msi)
-- [Flutter SDK >= 3.22.3](https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.22.3-stable.zip)
+- [Python >= 3.11.9](https://python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe).
+- **Firebase account**: Obtain Firebase credentials by creating a Firebase project [here](https://console.firebase.google.com).
+- **Gemini API key**: Obtain your Gemini API key by signing up for access [here](https://aistudio.google.com/app/apikey).
 
 ### Installation
 
-#### Python Server
+1. **Fork the Repository**:
+   - Go to the [Mivro Python Server repository](https://github.com/1MindLabs/mivro-python-server) and click "Fork" to create a copy under your GitHub account.
 
-1. **Fork the repository**:
-   - Go to the [Mivro repository on GitHub](https://github.com/SpaceTesla/Mivro) and click the "Fork" button at the top right corner to create a copy under your GitHub account.
+2. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/<your-username>/mivro-python-server.git
+   ```
 
-2. **Clone the repository to your local machine**:
-    ```shell
-    git clone https://github.com/<your-username>/Mivro.git
-    ```
+3. **Create a Virtual Environment (Optional but Recommended)**:
+   ```bash
+   python -m venv .venv
+   ```
 
-3. **Navigate to the project directory**:
-    ```shell
-    cd Mivro
-    ```
+4. **Activate the Virtual Environment**:
+   - **Windows**:
+     ```bash
+     .venv\Scripts\activate
+     ```
+   - **macOS and Linux**:
+     ```bash
+     source .venv/bin/activate
+     ```
 
-4. **Create a virtual environment (optional but recommended)**:
-    ```shell
-    python -m venv .venv
-    ```
+5. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-5. **Activate the virtual environment**:
-    - **Windows**:
-        ```shell
-        .venv\Scripts\activate
-        ```
-    - **macOS and Linux**:
-        ```shell
-        source .venv/bin/activate
-        ```
-
-6. **Install the project dependencies**:
-    ```shell
-    pip install -r requirements.txt
-    ```
-
-7. **Set up the configuration files**:
+6. **Set Up Environment Variables**:
    - Create a `.env` file in the project root directory with the following template:
      ```ini
      FLASK_SECRET_KEY=your_secret_key
@@ -104,61 +98,54 @@ Follow these steps to set up and run the Mivro software on your local machine, o
        "client_id": "your_client_id",
        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
        "token_uri": "https://oauth2.googleapis.com/token",
-       "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-       "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/your_client_email",
+       "auth_provider_x509_cert_url": "https://googleapis.com/oauth2/v1/certs",
+       "client_x509_cert_url": "https://googleapis.com/robot/v1/metadata/x509/your_client_email",
        "universe_domain": "googleapis.com"
      }
      ```
 
-8. **Run the Python application**:
-    ```shell
-    python python-app/app.py
-    ```
+7. **Run the Python Application**:
+   ```bash
+   python server/app.py
+   ```
 
-#### Browser Extension
+## Usage
 
-1. **Set up the Chrome extension**:
-    - Open Chrome and go to `chrome://extensions`.
-    - Enable "Developer mode" (top right corner).
-    - Click "Load unpacked" (top left corner).
-    - Select the `browser-extension` folder in the Mivro repository.
+To interact with the Mivro Python Server, you can use API calls via Postman or any HTTP client. Below is an example of how to search for a product using its barcode.
 
-2. **Using the Browser Extension**:
-    - Navigate to any of the following supported websites:
-      - https://www.bigbasket.com
-      - https://www.blinkit.com
-      - https://www.swiggy.com
-      - https://www.zeptonow.com
-      - https://www.jiomart.com
-      - https://www.amazon.com
-      - https://www.flipkart.com
+**NOTE**: Replace `Mivro-Email`, `Mivro-Password`, and `product_barcode` with actual values depending on the route you are testing.
 
-    - Select and open any product. The browser extension will appear on the right side of the screen. Click on the extension icon to access detailed information.
+### Example API Call
 
-#### Flutter Application
+- **Endpoint**: `/api/v1/search/barcode`
+- **Method**: `POST`
+- **Headers**:
+  - `Mivro-Email: your_email@example.com`
+  - `Mivro-Password: your_password`
+- **Body (JSON)**:
+  ```json
+  {
+    "product_barcode": "8901719104046"
+  }
+  ```
 
-1. **Navigate to the flutter-app directory**:
-    ```shell
-    cd flutter-app
-    ```
+### Example Response
 
-2. **Get Flutter dependencies**:
-    ```shell
-    flutter pub get
-    ```
+To see an example of the response you can expect, refer to the [response-example.json](https://github.com/1MindLabs/mivro-documentation/blob/main/response-example.json) file.
 
-3. **Prepare your device**:
-    - Ensure an Android device is connected and debugging is enabled, or start an Android emulator.
+## Documentation
 
-4. **Run the Flutter app**:
-    ```shell
-    flutter run
-    ```
+For detailed documentation, please visit the [Documentation Repository](https://github.com/1MindLabs/mivro-documentation).
+
+## Contributing
+
+We welcome contributions! Please follow the guidelines in our [Contributing Guide](https://github.com/1MindLabs/mivro-documentation/blob/main/CONTRIBUTING.md) to get started.
 
 ## License
 
-This project is licensed under the [MIT License](https://github.com/SpaceTesla/Mivro/blob/main/LICENSE).
+This project is licensed under the [MIT License](https://github.com/1MindLabs/mivro-documentation/blob/main/LICENSE).
 
-## Authors
+## Acknowledgments
 
-[Areeb Ahmed](https://github.com/areebahmeddd) - [Shivansh Karan](https://github.com/SpaceTesla) - [Shashwat Kumar](https://github.com/shashwat6204) - [Rishi Chirchi](https://github.com/rishichirchi)
+- [Open Food Facts](https://world.openfoodfacts.org) for providing access to a comprehensive food product database.
+- [All Contributors](https://github.com/1MindLabs/mivro-python-server/graphs/contributors) for their valuable contributions to the development and improvement of this project.
