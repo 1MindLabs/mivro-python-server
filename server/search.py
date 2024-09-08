@@ -68,10 +68,9 @@ def barcode() -> Response:
             'nutriscore_grade_color': grade_color(filtered_product_data.get('nutriscore_grade', '')),
             'nutriscore_assessment': score_assessment(filtered_product_data.get('nutriscore_score', None)).title(),
             'health_risk': lumi(filtered_product_data.get('ingredients', [])),
-            'total_health_risk': len(filtered_product_data.get('health_risk', {}).get('ingredient_warnings', [])),
+            'total_health_risks': len(filtered_product_data.get('health_risk', {}).get('ingredient_warnings', [])),
             'selected_images': filter_image(filtered_product_data.get('selected_images', [])),
-            'recommeded_product': swapr(email, filtered_product_data),
-            'warning': 'The information provided is for general guidance only and should not be considered medical advice. Always seek professional advice for important health decisions.'
+            'recommeded_product': swapr(email, filtered_product_data)
         })
 
         # Store the scan history for the product barcode in Firestore
