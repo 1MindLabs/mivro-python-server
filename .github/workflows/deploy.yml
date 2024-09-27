@@ -1,14 +1,12 @@
 name: Deploy to Docker Hub
 
 on:
-  workflow_run:
-    workflows: ["Build Python"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
