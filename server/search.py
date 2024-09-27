@@ -110,7 +110,7 @@ def database() -> Response:
             return jsonify({'error': 'Email and product keyword are required.'}), 400
 
         # Define the search keys and fetch the product data from Firestore using the keyword (fuzzy matching)
-        search_keys = ['_keywords', 'brands', 'categories', 'product_name']
+        search_keys = ['_keywords', 'categories', 'product_name']
         product_data = database_search(email, product_keyword, search_keys)
 
         if product_data:

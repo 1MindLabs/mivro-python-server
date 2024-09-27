@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    container_name: mivro_container
+    command: python server/app.py
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/mivro-backend
+    restart: always

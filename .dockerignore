@@ -1,0 +1,14 @@
+# Python related
+.venv/
+__pycache__/
+
+# Project-specific files
+.env
+firebase-adminsdk.json
+.github/
+tests/
+.gitignore
+README.md
+
+# Docker-specific files
+Dockerfile
