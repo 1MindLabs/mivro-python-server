@@ -28,9 +28,10 @@ app.register_error_handler(Exception, error_handler)
 # Enable CORS for all routes under /api/*
 CORS(app, resources={
     r'/api/*': {
-        'origins': ['*']
+        'origins': ['*'],
+        'supports_credentials': True
     }
 })
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True) # Run the app on localhost:5000 in debug mode
+    app.run(host='0.0.0.0', port=5000, debug=True) # Run the app on localhost:5000 in debug mode
