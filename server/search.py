@@ -13,7 +13,7 @@ from gemini import lumi, swapr
 
 # Blueprint for the search routes
 search_blueprint = Blueprint('search', __name__)
-api = openfoodfacts.API(user_agent='Mivro/1.5') # Initialize the Open Food Facts API client
+api = openfoodfacts.API(user_agent='Mivro/1.0') # Initialize the Open Food Facts API client
 
 @search_blueprint.route('/barcode', methods=['POST'])
 def barcode() -> Response:
@@ -63,15 +63,19 @@ def barcode() -> Response:
             'ingredients': filter_ingredient(filtered_product_data.get('ingredients', [])),
             'nova_group_name': nova_name(filtered_product_data.get('nova_group', '')),
             'nutriments': lumi(filtered_product_data.get('nutriments', {})),
-            'total_nutriments': len(filtered_product_data.get('nutriments', {}).get('positive_nutrient', [])) + 
-                                len(filtered_product_data.get('nutriments', {}).get('negative_nutrient', [])),
             'nutriscore_grade_color': grade_color(filtered_product_data.get('nutriscore_grade', '')),
             'nutriscore_assessment': score_assessment(filtered_product_data.get('nutriscore_score', None)).title(),
             'health_risk': lumi(filtered_product_data.get('ingredients', [])),
-            'total_health_risks': len(filtered_product_data.get('health_risk', {}).get('ingredient_warnings', [])),
             'selected_images': filter_image(filtered_product_data.get('selected_images', [])),
             'recommeded_product': swapr(email, filtered_product_data)
         })
+
+        # Calculating derived fields outside as they're not directly provided by the API
+        filtered_product_data['total_nutriments'] = (
+            len(filtered_product_data.get('nutriments', {}).get('positive_nutrient', [])) +
+            len(filtered_product_data.get('nutriments', {}).get('negative_nutrient', []))
+        )
+        filtered_product_data['total_health_risks'] = len(filtered_product_data.get('health_risk', {}).get('ingredient_warnings', []))
 
         # Store the scan history for the product barcode in Firestore
         database_history(email, product_barcode, filtered_product_data)

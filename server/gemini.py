@@ -14,7 +14,12 @@ from utils import health_profile, chat_history
 
 # Blueprint for the ai routes
 ai_blueprint = Blueprint('ai', __name__)
-genai.configure(api_key=GEMINI_API_KEY) # Load Gemini API key from .env
+# Load the Gemini API key from the environment variables
+if GEMINI_API_KEY:
+    print('GEMINI_API_KEY is set.')
+else:
+    print('GEMINI_API_KEY is not set.')
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Generation settings to control the model's output
 generation_config = {
@@ -107,7 +112,7 @@ def swapr(email: str, product_data: dict) -> Response:
         )
 
         if database_response.status_code != 200:
-            runtime_error('swapr', 'Database search failed.', middleware=database_response.json(), email=email)
+            # runtime_error('swapr', 'Database search failed.', middleware=database_response.json(), email=email)
             # return jsonify({'error': 'Database search failed.'}), database_response.status_code
             return {'product_name': filtered_response.strip()}
 
@@ -159,7 +164,6 @@ def savora() -> Response:
 
             # Delete the temporary file after processing
             os.remove(temp_path)
-
         else:
             return jsonify({'error': 'Invalid message type.'}), 400
 
