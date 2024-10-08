@@ -52,6 +52,22 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 
 ### Installation
 
+#### Option 1: Docker Setup
+
+1. **Pull the Docker Image**:
+   ```bash
+   docker pull areebahmeddd/mivro-backend:latest
+   ```
+
+2. **Run the Docker Container**:
+   ```bash
+   docker run -p 5000:5000 -e GEMINI_API_KEY=your_gemini_api_key areebahmeddd/mivro-backend:latest
+   ```
+
+   - Replace `your_gemini_api_key` with your actual API key.
+
+#### Option 2: Local Setup
+
 1. **Fork the Repository**:
    - Go to the [Mivro Python Server repository](https://github.com/1MindLabs/mivro-python-server) and click "Fork" to create a copy under your GitHub account.
 
